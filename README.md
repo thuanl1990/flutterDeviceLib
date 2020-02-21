@@ -15,6 +15,9 @@ To use this plugin, add `qnsdk` as a [dependency in your pubspec.yaml file](http
 - There is a pair in the Info.plist [Privacy - Bluetooth Peripheral Usage Description][privacy - bluetooth always usage description] button.
 
 ##### Android
+- Support Android 4.3 system above
+- Using androidx libraries in your project
+- Android 6.0 above requires authorized location rights
 
 ## Sample Usage
 
