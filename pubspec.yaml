@@ -1,6 +1,7 @@
 name: qnsdk
 description: The library serves as a bridge for company equipment communications
 version: 0.0.1-dev.1
+author: yolanda<liuquan596@gmail.com>
 homepage: https://github.com/YolandaQingniu/flutterDeviceLib
 
 environment:
