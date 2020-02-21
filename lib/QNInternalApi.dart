@@ -19,8 +19,6 @@ class QNInternalApi implements QNApi {
   QNInternalApi() {
     _eventChannel.receiveBroadcastStream().listen((message) {
       Map data = message[ArgumentName.data];
-      print("收到数据 ${message.toString()}");
-
       String eventName = message[ArgumentName.methodName];
       switch (eventName) {
         case EventName.onBleSystemState:
@@ -320,18 +318,18 @@ class QNInternalApi implements QNApi {
 
     Map<String, dynamic> result = await _methodChannel.invokeMapMethod(
         MethodName.generateScaleData, params);
-  
+
     List<QNScaleItemData> allItemData = <QNScaleItemData>[];
     List allItemDataMap = result[ArgumentName.allItemData];
     if (allItemDataMap != null) {
-    for (var item in allItemDataMap) {
-      QNScaleItemData itemData = QNScaleItemData(
-          item[ArgumentName.type],
-          item[ArgumentName.value],
-          item[ArgumentName.valueType],
-          item[ArgumentName.name]);
-      allItemData.add(itemData);
-    }
+      for (var item in allItemDataMap) {
+        QNScaleItemData itemData = QNScaleItemData(
+            item[ArgumentName.type],
+            item[ArgumentName.value],
+            item[ArgumentName.valueType],
+            item[ArgumentName.name]);
+        allItemData.add(itemData);
+      }
     }
     return QNScaleData(
         user, measureTime, result[ArgumentName.hmac], allItemData);

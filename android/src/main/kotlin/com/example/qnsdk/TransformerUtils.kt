@@ -52,13 +52,13 @@ class TransformerUtils {
          * 构建存储数据返回List<Map>
          */
         fun transStoreDataListMap(storedDataList: MutableList<QNScaleStoreData>?): List<Map<Any, Any>> {
-            var resultListMap = mutableListOf(mapOf<Any, Any>())
+            var resultListMap = mutableListOf<Map<Any, Any>>()
             storedDataList?.forEach {
                 val map = mapOf<Any, Any>(
                         ArgumentName.weight to it.weight,
                         ArgumentName.measureTime to it.measureTime.time,
                         ArgumentName.mac to it.mac,
-                        ArgumentName.hmac to it.mac
+                        ArgumentName.hmac to it.hmac
                 )
                 resultListMap.add(map)
             }
@@ -93,7 +93,7 @@ class TransformerUtils {
          * 构建测量数据item返回List<Map>
          */
         public fun transQNScaleItemDataListMap(itemDatas: List<QNScaleItemData>): List<Map<Any, Any>> {
-            var resultListMap = mutableListOf(mapOf<Any, Any>())
+            var resultListMap = mutableListOf<Map<Any, Any>>()
             itemDatas?.forEach {
                 val map = mapOf<Any, Any>(
                         ArgumentName.type to it.type,

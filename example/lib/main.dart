@@ -6,6 +6,8 @@ import 'package:qnsdk_example/group/scaleDataListItem.dart';
 import 'package:qnsdk_example/tool/Toast.dart';
 import 'package:qnsdk_example/userInfo.dart';
 import 'package:qnsdk/qnsdk.dart';
+import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
@@ -213,12 +215,32 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Future requestPermission() async {
+    Map<PermissionGroup, PermissionStatus> permissions =
+        await PermissionHandler().requestPermissions([PermissionGroup.location]);
+    PermissionStatus permission = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.location);
+
+    if (permission == PermissionStatus.granted) {
+      _bleTool.startScan();
+          _updateCurEvent(EventState.Scanning);
+    } else {
+      Toast.showCenterToast("Location permission is denied and bluetooth cannot find the device");
+    }
+  }
+
   void _curEventChange() {
     switch (_curEvent) {
       case EventState.Unknow:
         _deviceList.clear();
-        _bleTool.startScan();
-        _updateCurEvent(EventState.Scanning);
+        if (Platform.isAndroid) {
+          //request permission
+          requestPermission();
+        } else {
+          _bleTool.startScan();
+          _updateCurEvent(EventState.Scanning);
+        }
+
         break;
       case EventState.Scanning:
         _bleTool.stopScan();

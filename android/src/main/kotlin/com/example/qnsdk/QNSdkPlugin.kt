@@ -7,7 +7,9 @@
 package com.example.qnsdk
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.NonNull
+import com.qingniu.qnble.utils.QNLogUtils
 import com.yolanda.health.qnblesdk.constant.CheckStatus
 import com.yolanda.health.qnblesdk.constant.UserGoal
 import com.yolanda.health.qnblesdk.constant.UserShape
@@ -28,25 +30,32 @@ import java.util.*
 public class QNSdkPlugin : FlutterPlugin, MethodCallHandler, QNSdkApi, EventChannel.StreamHandler {
 
 
-    private var eventSink: EventChannel.EventSink? = null
-
-
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        context = flutterPluginBinding.applicationContext
+        qnBleApi = QNBleApi.getInstance(flutterPluginBinding.applicationContext)
         val channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), ArgumentName.channelName)
         channel.setMethodCallHandler(QNSdkPlugin())
+        val eventChannel = EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), ArgumentName.eventName)
+        eventChannel.setStreamHandler(QNSdkPlugin())
+        //QNLogUtils.setLogEnable(true)
     }
+
 
     companion object {
 
         lateinit var qnBleApi: QNBleApi
+        lateinit var context: Context
+        lateinit var eventSink: EventChannel.EventSink
 
         @JvmStatic
         fun registerWith(registrar: Registrar) {
+            context = registrar.context()
+            qnBleApi = QNBleApi.getInstance(context)
             val channel = MethodChannel(registrar.messenger(), ArgumentName.channelName)
             channel.setMethodCallHandler(QNSdkPlugin())
             val eventChannel = EventChannel(registrar.messenger(), ArgumentName.eventName)
             eventChannel.setStreamHandler(QNSdkPlugin())
-            qnBleApi = QNBleApi.getInstance(registrar.context())
+
         }
     }
 
@@ -55,10 +64,11 @@ public class QNSdkPlugin : FlutterPlugin, MethodCallHandler, QNSdkApi, EventChan
     }
 
     override fun onCancel(arguments: Any?) {
-        eventSink = null
+        // eventSink = null
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+        qnBleApi = QNBleApi.getInstance(context)
         when (call.method) {
             MethodName.initSdk -> {
                 var appid = call.argument<String>(ArgumentName.appid)
@@ -101,10 +111,16 @@ public class QNSdkPlugin : FlutterPlugin, MethodCallHandler, QNSdkApi, EventChan
                 var onlyScreenOn = call.argument<Boolean>(ArgumentName.onlyScreenOn)
                 var allowDuplicates = call.argument<Boolean>(ArgumentName.allowDuplicates)
                 var duration = call.argument<Int>(ArgumentName.duration)
-                var androidConnectOutTime = call.argument<Long>(ArgumentName.androidConnectOutTime)
+                var androidConnectOutTime: Int? = call.argument(ArgumentName.androidConnectOutTime)
                 var unit = call.argument<Int>(ArgumentName.unit)
-                var androidSetNotCheckGPS = call.argument<Boolean>(ArgumentName.androidSetNotCheckGPS)
-                saveConfig(onlyScreenOn, allowDuplicates, duration, androidConnectOutTime, unit, androidSetNotCheckGPS, result)
+                var androidSetNotCheckGPS: Boolean? = call.argument<Boolean>(ArgumentName.androidSetNotCheckGPS)
+                if (null == onlyScreenOn) onlyScreenOn = false
+                if (null == allowDuplicates) allowDuplicates = false
+                if (null == androidConnectOutTime) androidConnectOutTime = 10000
+                if (null == androidSetNotCheckGPS) androidSetNotCheckGPS = true
+                if (null == duration) duration = 0
+                if (null == unit) unit = 0
+                saveConfig(onlyScreenOn, allowDuplicates, duration, androidConnectOutTime.toLong(), unit, androidSetNotCheckGPS, result)
             }
             MethodName.generateScaleData -> {
                 var user = call.argument<Map<String, Any>>(ArgumentName.user)
@@ -286,7 +302,7 @@ public class QNSdkPlugin : FlutterPlugin, MethodCallHandler, QNSdkApi, EventChan
                 user!![ArgumentName.clothesWeight] as Double
         ) { code, msg ->
             if (code != 0) {
-                result.error(code as String, msg, "")
+                result.error(code.toString(), msg, "")
             }
         }
         qnBleApi.connectDevice(qnBleDevice, qnUser) { code, msg ->
@@ -306,7 +322,7 @@ public class QNSdkPlugin : FlutterPlugin, MethodCallHandler, QNSdkApi, EventChan
     }
 
     override fun generateScaleData(user: Map<String, Any>?, measureTime: Long?, mac: String?, hmac: String?, weight: Double?, result: Result) {
-        var qnScaleStoreData = QNScaleStoreData()
+
         var qnUser: QNUser = qnBleApi.buildUser(
                 user!![ArgumentName.userId] as String,
                 user!![ArgumentName.height] as Int,
@@ -318,17 +334,19 @@ public class QNSdkPlugin : FlutterPlugin, MethodCallHandler, QNSdkApi, EventChan
                 user!![ArgumentName.clothesWeight] as Double
         ) { code, msg ->
             if (code != 0) {
-                result.error(code as String, msg, "")
+                result.error(code.toString(), msg, "")
             }
         }
+        var qnScaleStoreData = QNScaleStoreData()
         qnScaleStoreData.setUser(qnUser)
         qnScaleStoreData.buildStoreData(weight!!, Date(measureTime!!), mac, hmac) { code, message ->
             if (code != 0) {
-                result.error(code as String, message, "")
+                result.error(code.toString(), message, "")
             } else {
                 val qnScaleData = qnScaleStoreData.generateScaleData()
                 result.success(mapOf(ArgumentName.allItemData to
-                        TransformerUtils.transQNScaleItemDataListMap(qnScaleData.allItem)))
+                        TransformerUtils.transQNScaleItemDataListMap(qnScaleData.allItem),
+                        ArgumentName.hmac to hmac))
             }
         }
 
@@ -338,7 +356,7 @@ public class QNSdkPlugin : FlutterPlugin, MethodCallHandler, QNSdkApi, EventChan
         qnBleApi.setBleStateListener { bleState ->
             eventSink?.let {
                 it.success(TransformerUtils.transFormerEventMap(EventName.onBleSystemState,
-                        mapOf(ArgumentName.state to bleState)))
+                        mapOf(ArgumentName.state to bleState.ordinal)))
             }
         }
         result.success(TransformerUtils.transResultCallMap(CheckStatus.OK.code, CheckStatus.OK.msg))

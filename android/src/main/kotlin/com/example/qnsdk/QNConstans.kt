@@ -75,7 +75,7 @@ class ArgumentName {
         const val scaleData = "scaleData";
         const val user = "user"
         const val measureTime = "measureTime"
-        const val hmac = "data"
+        const val hmac = "hmac"
         const val allItemData = "allItemData"
         const val type = "type"
         const val value = "value"
