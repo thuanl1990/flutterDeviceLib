@@ -284,7 +284,7 @@
     
     __weak __typeof(self)weakSelf = self;
     [self.bleApi connectDevice:device user:user callback:^(NSError *error) {
-        [weakSelf transformJsonFromErr:error];
+        result([weakSelf transformJsonFromErr:error]);
     }];
 }
 
