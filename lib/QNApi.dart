@@ -15,14 +15,9 @@ part of qnsdk;
  */
 
 abstract class QNApi {
-  static late QNApi _instance;
+  static QNApi _instance = QNInternalApi();
 
-  factory QNApi() {
-    if (_instance == null) {
-      _instance = QNInternalApi();
-    }
-    return _instance;
-  }
+  factory QNApi() => _instance;
 
   /**
    * Initialize the SDK based on appid and verify the appid and configuration file
