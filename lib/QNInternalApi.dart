@@ -69,6 +69,11 @@ class QNInternalApi implements QNApi {
         case EventName.onConnectError:
           _onConnectError(data);
           break;
+        //qnsdkX-2.x
+        case EventName.onScaleEventChange:
+          _onScaleEventChange(data);
+          break;
+
         default:
       }
     }, onError: (err) {});
@@ -205,6 +210,13 @@ class QNInternalApi implements QNApi {
     if (state != null) {
       _scaleDataListener.onScaleStateChange(device, state);
     }
+  }
+
+  //qnsdkX-2.x
+  void _onScaleEventChange(Map params) {
+    var device = QNBleDevice.fromJson(params[ArgumentName.device]);
+    int scaleEvent = params[ArgumentName.scaleEvent];
+    _scaleDataListener.onGetElectric(device, scaleEvent);
   }
 
   @override

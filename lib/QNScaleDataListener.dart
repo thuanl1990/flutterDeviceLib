@@ -37,4 +37,7 @@ abstract class QNScaleDataListener {
   void onGetElectric(QNBleDevice device, int electric);
 
   void onScaleStateChange(QNBleDevice device, int scaleState);
+
+  //qnsdkX-2.X
+  void onScaleEventChange(QNBleDevice device, int scaleEvent);
 }

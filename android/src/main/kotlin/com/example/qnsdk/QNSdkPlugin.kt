@@ -10,13 +10,14 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.NonNull
 import com.qingniu.qnble.utils.QNLogUtils
-import com.yolanda.health.qnblesdk.constant.CheckStatus
-import com.yolanda.health.qnblesdk.constant.UserGoal
-import com.yolanda.health.qnblesdk.constant.UserShape
-import com.yolanda.health.qnblesdk.listener.QNBleConnectionChangeListener
-import com.yolanda.health.qnblesdk.listener.QNBleDeviceDiscoveryListener
-import com.yolanda.health.qnblesdk.listener.QNScaleDataListener
-import com.yolanda.health.qnblesdk.out.*
+import com.qn.device.constant.CheckStatus
+import com.qn.device.constant.UserGoal
+import com.qn.device.constant.UserShape
+import com.qn.device.out.QNBleDevice;
+import com.qn.device.listener.QNBleConnectionChangeListener
+import com.qn.device.listener.QNBleDeviceDiscoveryListener
+import com.qn.device.listener.QNScaleDataListener
+import com.qn.device.out.*
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
@@ -224,6 +225,10 @@ public class QNSdkPlugin : FlutterPlugin, MethodCallHandler, QNSdkApi, EventChan
                 }
             }
 
+            override fun onStartInteracting(qnBleDevice: QNBleDevice?) {
+
+            }
+
         })
         result.success(TransformerUtils.transResultCallMap(CheckStatus.OK.code, CheckStatus.OK.msg))
     }
@@ -268,6 +273,20 @@ public class QNSdkPlugin : FlutterPlugin, MethodCallHandler, QNSdkApi, EventChan
                             mapOf(ArgumentName.device to TransformerUtils.transQNBleDeviceMap(qnBleDevice),
                                     ArgumentName.scaleData to TransformerUtils.transQNScaleDataMap(qnScaleData))))
                 }
+            }
+
+           /**
+            * qnsdkX-2.x added. 
+            */
+           override fun onScaleEventChange(qnBleDevice: QNBleDevice?, scaleEvent: Int) {
+                eventSink?.let {
+                    it.success(TransformerUtils.transFormerEventMap(EventName.onScaleEventChange,
+                            mapOf(ArgumentName.device to TransformerUtils.transQNBleDeviceMap(qnBleDevice),
+                                    ArgumentName.scaleEvent to scaleEvent)))
+                }
+            }
+
+            override fun readSnComplete(qnBleDevice: QNBleDevice?, sn: String ) {
             }
 
         })

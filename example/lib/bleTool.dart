@@ -173,4 +173,7 @@ class BleTool
   void onScaleStateChange(QNBleDevice device, int scaleState) {
     deviceStateStream.add(scaleState);
   }
+
+  @override
+  void onScaleEventChange(QNBleDevice device, int saleEvent) {}
 }
