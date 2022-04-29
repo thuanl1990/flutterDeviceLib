@@ -7,7 +7,6 @@
 
 part of qnsdk;
 
-
 /**
  * [iOS project configuration] 
  * iOS10.0 and above must have Bluetooth instructions in Info.plist, otherwise the system's Bluetooth function cannot be used
@@ -16,7 +15,7 @@ part of qnsdk;
  */
 
 abstract class QNApi {
-  static QNApi _instance;
+  static late QNApi _instance;
 
   factory QNApi() {
     if (_instance == null) {

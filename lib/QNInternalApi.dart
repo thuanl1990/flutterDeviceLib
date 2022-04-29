@@ -7,10 +7,10 @@
 part of qnsdk;
 
 class QNInternalApi implements QNApi {
-  QNBleDeviceDiscoveryListener _discoveryListener;
-  QNBleConnectionChangeListener _connectionChangeListener;
-  QNScaleDataListener _scaleDataListener;
-  QNBleStateListener _bleStateListener;
+  QNBleDeviceDiscoveryListener? _discoveryListener;
+  QNBleConnectionChangeListener? _connectionChangeListener;
+  QNScaleDataListener? _scaleDataListener;
+  QNBleStateListener? _bleStateListener;
 
   final MethodChannel _methodChannel =
       const MethodChannel(ArgumentName.channelName);
@@ -79,11 +79,12 @@ class QNInternalApi implements QNApi {
     }, onError: (err) {});
   }
 
-  Future<QNResult> _callMethod({String methodName, Map params}) async {
-    Map<String, dynamic> result =
+  Future<QNResult> _callMethod(
+      {required String methodName, Map? params}) async {
+    Map<String, dynamic>? result =
         await _methodChannel.invokeMapMethod(methodName, params);
     return QNResult(
-        result[ArgumentName.errorCode], result[ArgumentName.errorMsg]);
+        result![ArgumentName.errorCode], result[ArgumentName.errorMsg]);
   }
 
   //QNBleStateListener
@@ -108,51 +109,51 @@ class QNInternalApi implements QNApi {
         break;
       default:
     }
-    _bleStateListener.onBleSystemState(bleState);
+    _bleStateListener!.onBleSystemState(bleState);
   }
 
   //QNBleDeviceDiscoveryListener
   void _onDeviceDiscover(Map params) {
     Map deviceJson = params[ArgumentName.device];
     var device = QNBleDevice.fromJson(deviceJson);
-    _discoveryListener.onDeviceDiscover(device);
+    _discoveryListener!.onDeviceDiscover(device);
   }
 
-  void _onStartScan(Map params) => _discoveryListener.onStartScan();
+  void _onStartScan(Map params) => _discoveryListener!.onStartScan();
 
-  void _onStopScan(Map params) => _discoveryListener.onStopScan();
+  void _onStopScan(Map params) => _discoveryListener!.onStopScan();
 
   void _onScanFail(Map params) =>
-      _discoveryListener.onScanFail(params[ArgumentName.scanFailCode]);
+      _discoveryListener!.onScanFail(params[ArgumentName.scanFailCode]);
 
   //QNBleConnectionChangeListener
-  void _onConnecting(Map params) => _connectionChangeListener.onConnecting();
+  void _onConnecting(Map params) => _connectionChangeListener!.onConnecting();
 
-  void _onConnected(Map params) => _connectionChangeListener.onConnected();
+  void _onConnected(Map params) => _connectionChangeListener!.onConnected();
 
   void _onServiceSearchComplete(Map params) =>
-      _connectionChangeListener.onServiceSearchComplete();
+      _connectionChangeListener!.onServiceSearchComplete();
 
   void _onDisconnecting(Map params) =>
-      _connectionChangeListener.onDisconnecting();
+      _connectionChangeListener!.onDisconnecting();
 
   void _onDisconnected(Map params) =>
-      _connectionChangeListener.onDisconnected();
+      _connectionChangeListener!.onDisconnected();
 
   void _onConnectError(Map params) =>
-      _connectionChangeListener.onConnectError(params[ArgumentName.errorCode]);
+      _connectionChangeListener!.onConnectError(params[ArgumentName.errorCode]);
 
   //QNScaleDataListener
   void _onGetUnsteadyWeight(Map params) {
     double weight = params[ArgumentName.weight] ?? 0;
     var device = QNBleDevice.fromJson(params[ArgumentName.device]);
-    _scaleDataListener.onGetUnsteadyWeight(device, weight);
+    _scaleDataListener!.onGetUnsteadyWeight(device, weight);
   }
 
   void _onGetScaleData(Map params) {
     var device = QNBleDevice.fromJson(params[ArgumentName.device]);
     var scaleData = QNScaleData.fromJson(params[ArgumentName.scaleData]);
-    _scaleDataListener.onGetScaleData(device, scaleData);
+    _scaleDataListener!.onGetScaleData(device, scaleData);
   }
 
   void _onGetStoredScale(Map params) {
@@ -162,19 +163,19 @@ class QNInternalApi implements QNApi {
     for (var item in storeDataListJson) {
       storeDataList.add(QNScaleStoreData.fromJson(item));
     }
-    _scaleDataListener.onGetStoredScale(device, storeDataList);
+    _scaleDataListener!.onGetStoredScale(device, storeDataList);
   }
 
   void _onGetElectric(Map params) {
     var device = QNBleDevice.fromJson(params[ArgumentName.device]);
     int electric = params[ArgumentName.electric];
-    _scaleDataListener.onGetElectric(device, electric);
+    _scaleDataListener!.onGetElectric(device, electric);
   }
 
   void _onScaleStateChange(Map params) {
     var device = QNBleDevice.fromJson(params[ArgumentName.device]);
     int scaleStateIndex = params[ArgumentName.scaleState] ?? 0;
-    int state;
+    int state = QNScaleState.STATE_UNKNOWN;
     switch (scaleStateIndex) {
       case -1:
         state = QNScaleState.STATE_Link_LOSS;
@@ -207,8 +208,8 @@ class QNInternalApi implements QNApi {
         state = QNScaleState.STATE_MEASURE_COMPLETED;
         break;
     }
-    if (state != null) {
-      _scaleDataListener.onScaleStateChange(device, state);
+    if (state != QNScaleState.STATE_UNKNOWN) {
+      _scaleDataListener!.onScaleStateChange(device, state);
     }
   }
 
@@ -216,7 +217,7 @@ class QNInternalApi implements QNApi {
   void _onScaleEventChange(Map params) {
     var device = QNBleDevice.fromJson(params[ArgumentName.device]);
     int scaleEvent = params[ArgumentName.scaleEvent];
-    _scaleDataListener.onGetElectric(device, scaleEvent);
+    _scaleDataListener!.onGetElectric(device, scaleEvent);
   }
 
   @override
@@ -293,9 +294,9 @@ class QNInternalApi implements QNApi {
 
   @override
   Future<QNConfig> getConfig() async {
-    Map<String, dynamic> result =
+    Map<String, dynamic>? result =
         await _methodChannel.invokeMapMethod(MethodName.getConfig);
-    return QNConfig.fromJson(result);
+    return QNConfig.fromJson(result!);
   }
 
   @override
@@ -328,11 +329,11 @@ class QNInternalApi implements QNApi {
     params[ArgumentName.hmac] = hmac;
     params[ArgumentName.weight] = weight;
 
-    Map<String, dynamic> result = await _methodChannel.invokeMapMethod(
+    Map<String, dynamic>? result = await _methodChannel.invokeMapMethod(
         MethodName.generateScaleData, params);
 
     List<QNScaleItemData> allItemData = <QNScaleItemData>[];
-    List allItemDataMap = result[ArgumentName.allItemData];
+    List allItemDataMap = result![ArgumentName.allItemData];
     if (allItemDataMap != null) {
       for (var item in allItemDataMap) {
         QNScaleItemData itemData = QNScaleItemData(

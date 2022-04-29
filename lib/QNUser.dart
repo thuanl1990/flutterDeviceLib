@@ -12,8 +12,8 @@ class QNUser {
   final int height;
   final String gender;
   final DateTime birthday;
-  final int athleteType;
-  final double clothesWeight;
+  final int? athleteType;
+  final double? clothesWeight;
 
   QNUser(this.userId, this.height, this.gender, this.birthday,
       [this.athleteType, this.clothesWeight]);

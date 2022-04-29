@@ -14,6 +14,7 @@
 part of qnsdk;
 
 abstract class QNScaleState {
+  static const int STATE_UNKNOWN = -99;
   static const int STATE_Link_LOSS = -1;
   static const int STATE_DISCONNECTED = 0;
   static const int STATE_CONNECTED = 1;
