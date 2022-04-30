@@ -34,9 +34,9 @@ public class QNSdkPlugin : FlutterPlugin, MethodCallHandler, QNSdkApi, EventChan
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         context = flutterPluginBinding.applicationContext
         qnBleApi = QNBleApi.getInstance(flutterPluginBinding.applicationContext)
-        val channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), ArgumentName.channelName)
+        val channel = MethodChannel(flutterPluginBinding.getBinaryMessenger(), ArgumentName.channelName)
         channel.setMethodCallHandler(this)
-        val eventChannel = EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), ArgumentName.eventName)
+        val eventChannel = EventChannel(flutterPluginBinding.getBinaryMessenger(), ArgumentName.eventName)
         eventChannel.setStreamHandler(this)
         //QNLogUtils.setLogEnable(true)
     }
