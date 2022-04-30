@@ -42,3 +42,19 @@ abstract class QNScaleDataListener {
   //qnsdkX-2.X
   void onScaleEventChange(QNBleDevice device, int scaleEvent);
 }
+
+class QNScaleDataListenerDump implements QNScaleDataListener {
+  void onGetUnsteadyWeight(QNBleDevice device, double weight) {}
+
+  void onGetScaleData(QNBleDevice device, QNScaleData data) {}
+
+  void onGetStoredScale(
+      QNBleDevice device, List<QNScaleStoreData> storedDataList) {}
+
+  void onGetElectric(QNBleDevice device, int electric) {}
+
+  void onScaleStateChange(QNBleDevice device, int scaleState) {}
+
+  //qnsdkX-2.X
+  void onScaleEventChange(QNBleDevice device, int scaleEvent) {}
+}

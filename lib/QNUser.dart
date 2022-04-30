@@ -28,7 +28,6 @@ class QNUser {
             params[ArgumentName.athleteType],
             params[ArgumentName.clothesWeight]);
 
-  @override
   Map<String, dynamic> getParams() {
     var params = <String, dynamic>{};
     params['userId'] = this.userId;
