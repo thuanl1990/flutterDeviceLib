@@ -10,7 +10,7 @@ import 'package:qnsdk/qnsdk.dart';
 import 'package:qnsdk_example/group/paddingText.dart';
 
 class DeviceListItem extends StatefulWidget {
-  QNBleDevice device;
+  final QNBleDevice device;
 
   DeviceListItem({@required this.device});
 

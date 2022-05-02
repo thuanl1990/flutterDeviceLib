@@ -9,8 +9,8 @@ import 'package:flutter/widgets.dart';
 import 'package:qnsdk_example/group/paddingText.dart';
 
 class ScaleDataListItem extends StatefulWidget {
-  String title;
-  String value;
+  final String title;
+  final String value;
 
   ScaleDataListItem({this.title, this.value});
   @override
