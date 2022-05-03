@@ -216,16 +216,14 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future requestPermission() async {
-    Map<PermissionGroup, PermissionStatus> permissions =
-        await PermissionHandler().requestPermissions([PermissionGroup.location]);
-    PermissionStatus permission = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.location);
+    var permission = await Permission.location.request();
 
     if (permission == PermissionStatus.granted) {
       _bleTool.startScan();
-          _updateCurEvent(EventState.Scanning);
+      _updateCurEvent(EventState.Scanning);
     } else {
-      Toast.showCenterToast("Location permission is denied and bluetooth cannot find the device");
+      Toast.showCenterToast(
+          "Location permission is denied and bluetooth cannot find the device");
     }
   }
 
