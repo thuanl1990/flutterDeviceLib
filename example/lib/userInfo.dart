@@ -61,7 +61,7 @@ class _UserInfoState extends State<UserInfo> {
             flex: 1,
             child: TitleInput(
                 text: 'height',
-                initValue: widget.userinfomodel.toString(),
+                initValue: widget.userinfomodel.height.toString(),
                 textOnChange: (value) {
                   if (value != null) {
                     setState(() {
