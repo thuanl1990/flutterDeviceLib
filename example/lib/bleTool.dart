@@ -128,19 +128,27 @@ class BleTool
 
   //QNBleConnectionChangeListener
   @override
-  void onConnecting() {}
+  void onConnecting() {
+    //deviceStateStream.add(QNScaleState.STATE_CONNECTING);
+  }
 
   @override
-  void onConnected() {}
+  void onConnected() {
+    deviceStateStream.add(QNScaleState.STATE_CONNECTED);
+  }
 
   @override
   void onServiceSearchComplete() {}
 
   @override
-  void onDisconnecting() {}
+  void onDisconnecting() {
+    //deviceStateStream.add(QNScaleState.STATE_DISCONNECTING);
+  }
 
   @override
-  void onDisconnected() {}
+  void onDisconnected() {
+    deviceStateStream.add(QNScaleState.STATE_DISCONNECTED);
+  }
 
   @override
   void onConnectError(int errorCode) {
