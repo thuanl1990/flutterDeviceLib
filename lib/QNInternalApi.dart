@@ -254,8 +254,8 @@ class QNInternalApi implements QNApi {
   @override
   Future<QNResult> setBleConnectionChangeListener(
       QNBleConnectionChangeListener listener) async {
-    QNResult result =
-        await _callMethod(methodName: MethodName.setBleDeviceDiscoveryListener);
+    QNResult result = await _callMethod(
+        methodName: MethodName.setBleConnectionChangeListener);
     if (result.errorCode == 0) {
       _connectionChangeListener = listener;
     }
