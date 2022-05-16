@@ -14,9 +14,10 @@ class QNBleDevice {
   final String bluetoothName;
   final int rssi;
   final bool isScreenOn;
+  bool isConnect = false;
 
   QNBleDevice(this.mac, this.name, this.modeId, this.bluetoothName, this.rssi,
-      this.isScreenOn);
+      this.isScreenOn, this.isConnect);
 
   QNBleDevice.fromJson(Map params)
       : this(
@@ -25,12 +26,18 @@ class QNBleDevice {
             params[ArgumentName.modeId],
             params[ArgumentName.bluetoothName],
             params[ArgumentName.rssi],
-            params[ArgumentName.isScreenOn]);
+            params[ArgumentName.isScreenOn],
+            false);
 
   Map<String, dynamic> getParams() {
     var params = <String, dynamic>{};
     params[ArgumentName.mac] = this.mac;
+    params[ArgumentName.name] = this.name;
     params[ArgumentName.modeId] = this.modeId;
+    params[ArgumentName.bluetoothName] = this.bluetoothName;
+    params[ArgumentName.rssi] = this.rssi;
+    params[ArgumentName.isScreenOn] = this.isScreenOn;
+    params[ArgumentName.isConnect] = false;
     return params;
   }
 }

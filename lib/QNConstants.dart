@@ -63,6 +63,7 @@ abstract class ArgumentName {
   static const String bluetoothName = "bluetoothName";
   static const String rssi = "rssi";
   static const String isScreenOn = "isScreenOn";
+  static const String isConnect = "isConnect";
 
   static const String onlyScreenOn = "onlyScreenOn";
   static const String allowDuplicates = "allowDuplicates";
